@@ -11,13 +11,12 @@ const users = [
         thoughts: [],
         friends: [],
     },
-    // {
-
-    // },
-    // {
-
-    // },
-    // {
-
-    // },
+    {
+        username: "karl.rossman",
+        email: "amerika@aol.com",
+        thoughts: [],
+        friends: [],
+    },
 ]
+
+module.exports = users;

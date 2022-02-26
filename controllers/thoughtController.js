@@ -1,4 +1,3 @@
-const { countReset } = require('console');
 const { User, Thought, Reaction } = require('../models');
 
 module.exports = {
@@ -22,14 +21,6 @@ module.exports = {
     },
 
     // Create a thought
-    // createThought(req, res) {
-    //     Thought.create(req.body)
-    //         .then((thought) => res.json(thought))
-    //         .catch((err) => {
-    //             console.log(err);
-    //             return res.status(500).json(err);
-    //         });
-    // },
     createThought(req, res) {
         Thought.create(req.body)
             .then((thought) => {
@@ -74,5 +65,22 @@ module.exports = {
                     : res.json(thought)
             )
             .catch((err) => res.status(500).json(err));
+    },
+
+    // Create reaction to thought
+    createReaction(req, res) {
+        Thought.findOneAndUpdate(
+            { _id: req.params.thoughtId },
+            { $addToSet: { reactions: req.body } },
+            { runValidators: true, new: true },
+        )
+        .then((thought) => {
+            if (!thought) {
+                res.status(404).json({ message: 'No thought found with this ID' });
+                return;
+            }
+            res.json(thought);
+        })
+        .catch((err) => res.status(500).json(err));
     },
 };
