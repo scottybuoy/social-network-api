@@ -11,7 +11,7 @@ module.exports = {
     // Get a single thought
     getSingleThought(req, res) {
         Thought.findOne({ _id: req.params.thoughtId })
-        .select('__v')
+        .select('-__v')
         .then((thought) =>
             !thought
             ? res.status(404).json({ message: 'No thought with that ID' })
@@ -33,7 +33,7 @@ module.exports = {
             .then((user) => 
                 !user
                 ? res.status(404).json({ message: 'Thought created, but no user with that ID' })
-                : res.json('Though created!')
+                : res.json('Thought created!')
             )
             .catch((err) => {
                 console.log(err);
@@ -80,6 +80,22 @@ module.exports = {
                 return;
             }
             res.json(thought);
+        })
+        .catch((err) => res.status(500).json(err));
+    },
+
+    // Delete reaction to thought
+    deleteReaction(req, res) {
+        Thought.findOneAndUpdate(
+            { _id: req.params.thoughtId },
+            { $pull: { reactions: { reactionId: req.body.reactionId } } },
+            { runValidators: true, new: true }
+        )
+        .then((thought) => {
+            if (!thought) {
+                res.status(404).json({ message: 'No thought found with this ID' });
+            }
+            res.json({ message: 'Reaction deleted'});
         })
         .catch((err) => res.status(500).json(err));
     },
